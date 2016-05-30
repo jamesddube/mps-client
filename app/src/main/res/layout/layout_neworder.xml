@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/l"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:background="@color/app_bg"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+
+            >
+            <TextView
+                android:id="@+id/neworder_customer"
+                android:gravity="center"
+                android:layout_width="150dp"
+                android:textColor="@color/white"
+                android:padding="5dp"
+                android:textSize="20sp"
+                android:text="Bakers INN"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+            <TextView
+                android:gravity="center"
+                android:layout_width="150dp"
+                android:padding="5dp"
+                android:textSize="15sp"
+                android:text="OD10234"
+                android:textColor="@color/white"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:background="@color/app_bg"
+            android:layout_height="50dp">
+
+
+
+            <EditText
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:layout_marginLeft="40dp"
+                android:background="@color/input_register_bg"
+                android:hint="Product Code"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/input_register"
+                android:textColorHint="@color/input_register_hint"
+                android:id="@+id/CustomerOrder_editProduct"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/CustomerOrder_imgSearch"
+                android:layout_toStartOf="@+id/CustomerOrder_imgSearch" />
+
+            <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/CustomerOrder_imgSearch"
+                android:background="@drawable/ic_search"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignBottom="@+id/CustomerOrder_editProduct"
+                android:layout_alignTop="@+id/CustomerOrder_editProduct" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Fanta 300ml 12Pack"
+                android:textColor="@color/white"
+                android:id="@+id/CustomerOrder_txtProductHint"
+                android:layout_alignBaseline="@+id/CustomerOrder_editProduct"
+                android:layout_alignBottom="@+id/CustomerOrder_editProduct"
+                android:layout_toLeftOf="@+id/CustomerOrder_editProduct"
+                android:layout_toStartOf="@+id/CustomerOrder_editProduct" />
+
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:background="@color/app_bg"
+            android:layout_height="50dp">
+
+
+
+            <EditText
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_marginEnd="40dp"
+                android:background="@color/input_register_bg"
+                android:hint="Quantity"
+                android:padding="10dp"
+                android:singleLine="true"
+                android:textColor="@color/input_register"
+                android:textColorHint="@color/input_register_hint"
+                android:id="@+id/CustomerOrder_editQu"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
+
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Insufficient"
+                android:textColor="@color/white"
+                android:id="@+id/CustomerOrder_txtQuantityHint"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/CustomerOrder_editQu"
+                android:layout_toStartOf="@+id/CustomerOrder_editQu"
+                android:layout_marginRight="65dp"
+                android:layout_marginEnd="65dp" />
+
+
+        </RelativeLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:background="@color/app_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/neworder_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_add" />
+        </LinearLayout>
+
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/neworder_invoicedetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
+
+
+
+
+    </LinearLayout>
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/ic_tick" />
+</android.support.design.widget.CoordinatorLayout>

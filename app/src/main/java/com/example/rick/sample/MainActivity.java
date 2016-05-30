@@ -23,12 +23,12 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+       /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_menu_arrow);
-        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setDisplayHomeAsUpEnabled(true);*/
 
         Fragment_Dashboard fragment_dashboard = new Fragment_Dashboard();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity
         fragmentTransaction.replace(R.id.fragment_container,fragment_dashboard);
         fragmentTransaction.commit();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+       /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,12 +44,12 @@ public class MainActivity extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+*/
+      /*  DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        toggle.syncState();*/
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -105,7 +105,10 @@ public class MainActivity extends AppCompatActivity
                     .replace(R.id.fragment_container, Fragment_Orders.newInstance())
                     .commit();
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_customers) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, Fragment_Customers.newInstance())
+                    .commit();
 
         } else if (id == R.id.nav_manage) {
 
