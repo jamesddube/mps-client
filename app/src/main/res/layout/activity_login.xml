@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:id="@+id/login"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -11,6 +12,17 @@
         android:paddingTop="56dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
+        <ImageView
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"
+            android:id="@+id/login_prefs"
+            android:layout_marginEnd="10dp"
+            android:layout_width="30dp"
+            android:background="@drawable/settings"
+            android:layout_height="30dp"
+            android:contentDescription="Settings"
+            android:layout_gravity="right" />
 
         <ImageView android:src="@drawable/ic_logo"
             android:layout_width="wrap_content"
@@ -20,6 +32,7 @@
 
         <!-- Email Label -->
         <android.support.design.widget.TextInputLayout
+            android:id="@+id/emailWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -36,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:id="@+id/passwordWrapper"
 
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_password"
@@ -52,6 +66,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginBottom="24dp"
             android:background="@color/colorPrimaryDark"
+            android:textColor="@color/white"
             android:padding="12dp"
             android:text="Login"/>
 

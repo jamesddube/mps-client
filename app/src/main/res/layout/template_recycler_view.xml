@@ -1,24 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:padding="5dp"
+
+    android:padding="2dp"
     >
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/cv"
-        >
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
-            >
 
             <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:id="@+id/customer_logo"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
@@ -30,23 +20,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/customer_name"
+                android:textSize="15sp"
+                android:text="Coke 330ml"
+                android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/customer_logo"
-                android:layout_alignParentTop="true"
-                android:textSize="25sp"
-                android:text="Spar Mandara"
-                />
+                android:layout_toEndOf="@+id/customer_logo" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/customer_type"
-                android:layout_toRightOf="@+id/customer_logo"
-                android:layout_below="@+id/customer_name"
-                android:text="12 Simon Mazorodze Road, Mutare"
-                />
+                android:text="10"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true" />
 
-        </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

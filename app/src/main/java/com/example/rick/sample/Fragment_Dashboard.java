@@ -30,5 +30,8 @@ public class Fragment_Dashboard extends Fragment {
         return new Fragment_Dashboard();
     }
 
-
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
 }

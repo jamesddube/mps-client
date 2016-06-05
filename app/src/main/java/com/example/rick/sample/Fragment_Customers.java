@@ -1,6 +1,9 @@
 package com.example.rick.sample;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +17,12 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.orm.SugarRecord;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +32,15 @@ import java.util.List;
 public class Fragment_Customers extends Fragment {
 
     RecyclerView recyclerView;
+    ProgressDialog progressDialog;
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            progressDialog.dismiss();
+        }
+    };
 
     public Fragment_Customers() {
         // Required empty public constructor
@@ -31,6 +49,8 @@ public class Fragment_Customers extends Fragment {
     public static Fragment_Customers newInstance() {
         return new Fragment_Customers();
     }
+
+
 
 
     @Override
@@ -54,31 +74,93 @@ public class Fragment_Customers extends Fragment {
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        CustomerDataAdapter adapter = new CustomerDataAdapter(getActivity(),getData());
-        recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(new CustomerDataAdapter.ClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                Toast.makeText(getActivity(),String.valueOf(position),Toast.LENGTH_LONG).show();
-                newOrder();
-            }
+        if(9==9)//Customer.getAll().size() )
+        {
+            populate(Customer.getAll());
+        }
+        else
+        {
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("Fetching Customers...");
+            progressDialog.setIndeterminate(true);
+            progressDialog.show();
 
-        });
+            Api.getCustomers(new Api.apiCallBack() {
+                @Override
+                public void onSuccess(JSONObject result) {
 
+
+                    Log.d("API",result.toString());
+                    List<Customer> customers = new ArrayList<>();
+
+                    JSONArray array = null;
+                    try {
+                        array = result.getJSONArray("customers");
+
+
+                    for(int i = 0; i< array.length();i++)
+                    {
+                        try{
+                        customers.add(new Customer(
+                            array.getJSONObject(i).getString("name"),
+                        array.getJSONObject(i).getInt("vat_number"),
+                        array.getJSONObject(i).getString("address"),
+                        array.getJSONObject(i).getString("telephone"),
+                        array.getJSONObject(i).getString("fax"),
+                        array.getJSONObject(i).getString("email"),
+                        array.getJSONObject(i).getString("city"),
+                        "up"));
+                        }
+                        catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    SugarRecord.saveInTx(customers);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    progressDialog.setMessage("Updating Customers...");
+                    populate(Customer.getAll());
+                    progressDialog.dismiss();
+                }
+
+                @Override
+                public void onError(String error) {
+                    progressDialog.dismiss();
+                    Toast.makeText(getActivity(),error,Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+        }
+
+
+
+
+    }
+
+    public void populate(List<Customer> customers)
+    {
+
+            CustomerDataAdapter adapter = new CustomerDataAdapter(getActivity(),customers);
+            recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
+            recyclerView.setAdapter(adapter);
+            adapter.setOnItemClickListener(new CustomerDataAdapter.ClickListener() {
+                @Override
+                public void onItemClick(int position, View v) {
+                    Toast.makeText(getActivity(),String.valueOf(position),Toast.LENGTH_LONG).show();
+                    newOrder();
+                }
+
+            });
 
     }
 
     public static List<Customer> getData()
     {
-        List<Customer> customers = new ArrayList<>();
-        String[] name = {"Spar Mandara","OK Supermarket","TM Supermarket","DODS Bakery","Carvary Restaurant","Tony's Coffee Shop","Mudiro Butchery","Valahala","Muunze Bar","jh","limo","uii"};
-        for (String aName : name) {
-            Customer customer = new Customer();
-            customer.setName(aName);
-            customers.add(customer);
-        }
-
-        return customers;
+        return Customer.getAll();
 
     }
 
@@ -89,4 +171,20 @@ public class Fragment_Customers extends Fragment {
                 .replace(R.id.fragment_container, Fragment_NewOrder.newInstance())
                 .commit();
     }
+
+    public void fetchCustomers()
+    {
+        Api.getCustomers(new Api.apiCallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                Log.d("API",result.toString());
+            }
+
+            @Override
+            public void onError(String error) {
+                Toast.makeText(getActivity(),error,Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 }
+

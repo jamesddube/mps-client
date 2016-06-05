@@ -34,6 +34,7 @@
     <color name="lbl_name">#333333</color>
     <color name="btn_logut_bg">#ff6861</color>
     <color name="selected_gray">#ffdbdbdb</color>
+    <color name="dark_gray">#1a1a1a</color>
 
     <color name="top_item">#a6c</color>
     <color name="bottom_item">#f44</color>
