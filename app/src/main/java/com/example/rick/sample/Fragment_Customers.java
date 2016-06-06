@@ -144,13 +144,14 @@ public class Fragment_Customers extends Fragment {
     public void populate(List<Customer> customers)
     {
 
-            CustomerDataAdapter adapter = new CustomerDataAdapter(getActivity(),customers);
+            final CustomerDataAdapter adapter = new CustomerDataAdapter(getActivity(),customers);
             recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getActivity()));
             recyclerView.setAdapter(adapter);
             adapter.setOnItemClickListener(new CustomerDataAdapter.ClickListener() {
                 @Override
                 public void onItemClick(int position, View v) {
                     Toast.makeText(getActivity(),String.valueOf(position),Toast.LENGTH_LONG).show();
+                    SalesOrder.TEMP_CUSTOMER = adapter.getCustomer(position);
                     newOrder();
                 }
 

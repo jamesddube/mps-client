@@ -62,7 +62,16 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+
+            int count = getFragmentManager().getBackStackEntryCount();
+
+            if (count == 0) {
+                super.onBackPressed();
+                //additional code
+            } else {
+                getFragmentManager().popBackStack();
+            }
+            //super.onBackPressed();
         }
     }
 
@@ -116,7 +125,7 @@ public class MainActivity extends AppCompatActivity
             Intent i = new Intent("android.intent.action.SYNC");
             startActivity(i);
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_send) {
 
@@ -126,4 +135,5 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }

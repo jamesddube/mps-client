@@ -2,13 +2,17 @@ package com.example.rick.sample;
 
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +23,15 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -31,9 +42,15 @@ public class Fragment_NewOrder extends Fragment {
 
     private RecyclerView recyclerView;
     private ImageView imageButton_Search;
+    private FloatingActionButton buttonAdd;
+    private ProgressDialog progressDialog;
     private Dialog dialog;
     private RecyclerView listView_ChooseProduct;
     private EditText editText_ProductCode;
+    private EditText editText_ProductQuantity;
+    private TextView editText_ProductCodeHint;
+    private SalesOrder salesOrder;
+    private CoordinatorLayout coordinatorLayout;
 
     public Fragment_NewOrder() {
         // Required empty public constructor
@@ -54,12 +71,20 @@ public class Fragment_NewOrder extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        progressDialog = new ProgressDialog(getActivity());
         FloatingActionButton fab = (FloatingActionButton) getView().findViewById(R.id.fab);
+        coordinatorLayout = (CoordinatorLayout) getView().findViewById(R.id.layout_neworder);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Uploading order...");
+                progressDialog.show();
+                postOrder();
+               /* Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();*/
+
+
             }
         });
 
@@ -78,14 +103,20 @@ public class Fragment_NewOrder extends Fragment {
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                 listView_ChooseProduct.setLayoutManager(layoutManager);
 
-                ProductDataAdapter adapter = new ProductDataAdapter(getActivity(),getProducts());
+                final ProductDataAdapter adapter = new ProductDataAdapter(getActivity(),getProducts());
                 listView_ChooseProduct.setAdapter(adapter);
 
                 adapter.setOnItemClickListener(new ProductDataAdapter.ClickListener() {
                     @Override
                     public void onItemClick(int position, View v) {
 
-                        editText_ProductCode.setText(String.valueOf(position));
+                        Product product = adapter.getProduct(position);
+
+                        Log.d("SQL","p: "+product.product_id + " pos" + position);
+
+
+                        editText_ProductCode.setText(product.product_id);
+                        editText_ProductCodeHint.setText(product.description);
                         dialog.hide();
                     }
                 });
@@ -96,35 +127,51 @@ public class Fragment_NewOrder extends Fragment {
             }
         });
 
+        buttonAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addProductToOrder();
+            }
+        });
+
+    }
+
+    private void postOrder() {
+        Api.postOrders(new Api.apiCallBack() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                if(result.has("message"))
+                {
+
+                    try {
+                            showSnackBarMessage(result.get("message").toString());
+                            progressDialog.dismiss();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            }
+
+            @Override
+            public void onError(String error) {
+                showSnackBarMessage(error);
+                progressDialog.dismiss();
+            }
+        });
     }
 
     public void populate()
     {
         editText_ProductCode = (EditText) getView().findViewById(R.id.CustomerOrder_editProduct);
+        editText_ProductQuantity = (EditText) getView().findViewById(R.id.CustomerOrder_editProductQuantity);
+        editText_ProductCodeHint = (TextView) getView().findViewById(R.id.CustomerOrder_txtProductHint);
         recyclerView = (RecyclerView)getView().findViewById(R.id.neworder_invoicedetails);
+        buttonAdd = (FloatingActionButton) getView().findViewById(R.id.neworder_add);
         //recyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(layoutManager);
-
-       OrderDetailDataAdapter adapter = new OrderDetailDataAdapter(getActivity(),getData());
-        recyclerView.setAdapter(adapter);
-    }
-
-    public static List<OrderDetail> getData()
-    {
-        List<OrderDetail> lineItems = new ArrayList<>();
-        String[] name = {"Spar Mandara","OK Supermarket","TM Supermarket","DODS Bakery","Carvary Restaurant","Tony's Coffee Shop","Mudiro Butchery","Valahala","Muunze Bar","jh","limo","uii"};
-        for (String aName : name) {
-            OrderDetail orderDetail = new OrderDetail();
-            orderDetail.product = aName;
-            orderDetail.quantity="8";
-            lineItems.add(orderDetail);
-
-        }
-
-        return lineItems;
 
     }
+
 
     private void populateChooseProductListView()
     {
@@ -146,24 +193,87 @@ public class Fragment_NewOrder extends Fragment {
     }
 
     private List<Product> getProducts() {
-        List<Product> lineItems = new ArrayList<>();
-        String[] name = {"Spar Mandara","OK Supermarket","TM Supermarket","DODS Bakery","Carvary Restaurant","Tony's Coffee Shop","Mudiro Butchery","Valahala","Muunze Bar","jh","limo","uii"};
-        for (String aName : name) {
-            Product product = new Product();
-            product.product = aName;
-            product.quantity="8";
-            lineItems.add(product);
+        return Product.listAll(Product.class);
+    }
+
+    private void addProductToOrder()
+    {
+        OrderDetail orderDetail = new OrderDetail();
+        orderDetail.product = editText_ProductCode.getText().toString();
+        orderDetail.quantity = editText_ProductQuantity.getText().toString();
+        orderDetail.order_id = getSalesOrder();
+        orderDetail.save();
+        populateLineItems();
+
+    }
+
+    private SalesOrder getSalesOrder() {
+        if (salesOrder == null)
+        {
+            SalesOrder order = new SalesOrder();
+            order.generateOrderNumber();
+            order.user_id = "1";
+            order.sync_id = false;
+            order.customer_id = SalesOrder.TEMP_CUSTOMER.getCustomerID();
+            order.order_status_id = 1;
+            order.order_date = new Date();
+            order.save();
+            this.salesOrder = order;
 
         }
 
-        return lineItems;
-
+        return this.salesOrder;
     }
 
-    private void save()
+    public void getCurrentDate()
     {
-        
+        Date today = new Date();
+        String currentDate = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
     }
+
+    private Long getOrderId()
+    {
+        SalesOrder order = this.getSalesOrder();
+        return order.getId();
+    }
+
+    private void populateLineItems()
+    {
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(layoutManager);
+
+        OrderDetailDataAdapter adapter = new OrderDetailDataAdapter(getActivity(),this.getSalesOrder().getLineItems());
+        recyclerView.setAdapter(adapter);
+
+    }
+
+    private void initialiseOrder()
+    {
+        this.salesOrder = new SalesOrder();
+        this.salesOrder.generateOrderNumber();
+    }
+
+    private void showSnackBarMessage(String message) {
+        progressDialog.dismiss();
+        Snackbar snackbar = Snackbar.make(coordinatorLayout,message,Snackbar.LENGTH_LONG);
+        snackbar.show();
+    }
+
+    private void showSnackBarMessageWithValidationErrors(String message,JSONArray array) {
+        progressDialog.dismiss();
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+        alertDialog.setTitle("title");
+        alertDialog.setMessage(array.toString());
+        Snackbar snackbar = Snackbar.make(coordinatorLayout,message,Snackbar.LENGTH_LONG)
+                .setAction("SHOW", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.show();
+            }
+        });
+        snackbar.show();
+    }
+
 
 
 }

@@ -99,29 +99,6 @@ public class Model extends SugarRecord {
 		return jsonArray;
 	}
 
-	public String getEndPoint()
-	{
-		Long id = this.getId();
-		String resource = "";
-
-		try {
-			resource = this.getClass().getField("Endpoint").get(this).toString();
-
-		}
-		catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		if (id == null)
-		{
-			return Api.Endpoint.ModelUrl(resource);
-		}
-
-		return Api.Endpoint.ModelUrl(resource+ "/" +id);
-
-	}
 
 
 	public static String getKey()

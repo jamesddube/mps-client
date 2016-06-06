@@ -7,6 +7,7 @@ import java.util.List;
  */
 public class Customer extends Model {
 
+    private String customer_id;
     private String name;
     private int vat_number;
     private String address;
@@ -101,5 +102,9 @@ public class Customer extends Model {
     {
 
         return Customer.listAll(Customer.class);
+    }
+
+    public String getCustomerID() {
+        return this.customer_id;
     }
 }

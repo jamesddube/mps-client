@@ -1,6 +1,9 @@
 package com.example.rick.sample;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 import com.orm.SugarRecord;
 
 import org.json.JSONArray;
@@ -26,11 +29,53 @@ public class GsonParser {
                 JSONObject object = customerArray.getJSONObject(i);
                 customerList.add(gson.fromJson(object.toString(), Customer.class));
             }
-            SugarRecord.saveInTx(customerList);
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return customerList;
     }
+
+    public static List<Product> parseProducts(JSONArray productArray)
+    {
+        List<Product> productList = new ArrayList<>();
+        try {
+
+            for(int i= 0; i < productArray.length();i++)
+            {
+                Gson gson = new Gson();
+                JSONObject object = productArray.getJSONObject(i);
+                productList.add(gson.fromJson(object.toString(), Product.class));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return productList;
+    }
+
+    public static JSONArray getSerializedOrders()
+    {
+        JSONArray serialised = null;
+        List<SalesOrder> salesOrderList  = SalesOrder.getUnprocessedOrders();
+
+        Gson gson = new Gson();
+        JsonElement element = gson.toJsonTree(salesOrderList, new TypeToken<List<Customer>>() {}.getType());
+
+        if (element.isJsonArray()) {
+            JsonArray jsonArray = element.getAsJsonArray();
+            try {
+                serialised = new JSONArray(jsonArray.toString());
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return serialised;
+
+
+    }
+
+
 }

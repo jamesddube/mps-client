@@ -30,15 +30,20 @@ public class ProductDataAdapter extends RecyclerView.Adapter<ProductDataAdapter.
 
     @Override
     public void onBindViewHolder(ProductViewHolder holder, int position) {
-        holder.product_code.setText(products.get(position).product);
-        holder.product_description.setText(products.get(position).product);
-        holder.product_quantity.setText(products.get(position).quantity);
+        holder.product_code.setText(products.get(position).product_id);
+        holder.product_description.setText(products.get(position).description);
+        holder.product_quantity.setText(String.valueOf(products.get(position).price));
 
     }
 
     @Override
     public int getItemCount() {
         return products.size();
+    }
+
+    public Product getProduct(int position) {
+
+        return this.products.get(position);
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener

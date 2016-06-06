@@ -13,11 +13,17 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -121,6 +127,55 @@ public class Api {
         queue.add(objectRequest);
     }
 
+    public static void postOrders(final apiCallBack apiCallBack)
+    {
+        try {
+            JSONObject payload = new JSONObject();
+            JSONObject orders = new JSONObject();
+            JSONArray serialised = GsonParser.getSerializedOrders();
+            orders.put("orders",serialised);
+            Log.d("JSON",orders.toString());
+            //orders.getJSONArray("orders");
+
+            RequestQueue queue = Volley.newRequestQueue(App.getInstance());
+            JsonObjectRequest orderRequest = new JsonObjectRequest(Request.Method.POST,
+                    Api.Endpoint.getUrl("sample"),
+                    orders,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            apiCallBack.onSuccess(response);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            apiCallBack.onError(parseError(error));
+                        }
+                    }
+            ){
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json");
+                    return headers;
+                }
+            };
+
+            queue.add(orderRequest);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+    }
+
+    public static String parseResponse()
+    {
+        return null;
+    }
+
     public static String parseError(VolleyError error)
     {
         String response = "Could not connect to the Server";
@@ -152,16 +207,11 @@ public class Api {
 
 
     public static abstract class Endpoint {
-        public static String API_URL = "http://10.0.2.2/mps/public/api/";
         public static String Customers = "customers";
-
-        public static String ModelUrl(String model_endpoint) {
-            return API_URL + model_endpoint;
-        }
-
         public static String Users = "users";
         public static String Products = "products";
         public static String Token = "oauth/token";
+        public static String Orders = "sample";
 
         @Nullable
         public static String getUrl(String url) {

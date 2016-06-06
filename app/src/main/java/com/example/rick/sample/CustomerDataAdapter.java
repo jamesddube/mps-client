@@ -42,6 +42,11 @@ public class CustomerDataAdapter extends RecyclerView.Adapter<CustomerDataAdapte
        // viewHolder.imageView.setImageResource(R.drawable.ic_dashboard);
     }
 
+    public Customer getCustomer(int position) {
+
+        return this.customers.get(position);
+    }
+
     @Override
     public int getItemCount() {
         return customers.size();

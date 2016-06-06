@@ -1,38 +1,28 @@
 package com.example.rick.sample;
 
 import android.app.ProgressDialog;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
-import com.google.gson.Gson;
-import com.orm.SugarContext;
 import com.orm.SugarRecord;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ActivitySync extends AppCompatActivity {
     FloatingActionButton button;
     ProgressDialog progressDialog;
     CoordinatorLayout coordinatorLayout;
+    Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,15 +47,31 @@ public class ActivitySync extends AppCompatActivity {
                     @Override
                     public void onSuccess(JSONObject result) {
 
+
+
                         showSyncMessage("Parsing results...");
 
                         try {
-                            GsonParser.parseCustomers(result.getJSONArray("customers"));
+
+                            List<Customer> customers = GsonParser.parseCustomers(result.getJSONArray("customers"));
+
+                            Thread thread = new Thread(new saveCustomers(customers));
+                            thread.start();
+                            handler = new Handler(){
+                                @Override
+                                public void handleMessage(Message msg) {
+
+                                }
+                            };
+                            List<Product> products = GsonParser.parseProducts(result.getJSONArray("products"));
+                            Thread thread2 = new Thread(new saveProducts(products));
+                            thread2.start();
+
                         } catch (JSONException e) {
                             showSnackBarMessage("Parsing error");
                         }
 
-                       showSnackBarMessage("Sync completed");
+                        showSnackBarMessage("Sync completed");
                     }
 
                     @Override
@@ -92,6 +98,44 @@ public class ActivitySync extends AppCompatActivity {
         progressDialog.setMessage(message);
 
     }
+
+
+        class saveCustomers implements Runnable
+        {
+            saveCustomers(List<Customer> customers){
+                this.customers = customers;
+            }
+            List<Customer> customers;
+            Message m = Message.obtain();
+            @Override
+            public void run() {
+
+                SugarRecord.saveInTx(customers);
+                Log.d("THREADS","after");
+                handler.sendMessage(m);
+            }
+
+
+        }
+
+    class saveProducts implements Runnable
+    {
+        saveProducts(List<Product> products){
+            this.products = products;
+        }
+        List<Product> products;
+        Message m = Message.obtain();
+        @Override
+        public void run() {
+
+            SugarRecord.saveInTx(products);
+            Log.d("THREADS","after");
+            handler.sendMessage(m);
+        }
+
+
+    }
+
 
 
 }
